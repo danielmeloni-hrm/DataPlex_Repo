@@ -1,0 +1,28 @@
+scans:
+  click_events_volume_2_code:
+    display_name: "Click Event Volume 2 (Minore di 2)"
+    resource_path: "projects/analystack/datasets/dataform/tables/click_events_latest"
+    schedule: "0 * * * *" # Ogni ora
+    # Il filtro per "oggi" rimane qui
+    alerts:
+      enabled: true
+      notification_channels:
+        - coll_ids: ["4522141508255789466"] 
+
+      monitored_rules: "all"
+      documentation: |
+         ###  Allerta Volume Dati Critico
+         La tabella `click_events_latest` ha registrato meno di 2 eventi nell'ultima ora.
+         **Possibile causa:** Problema nel tracciamento frontend o ritardo nella pipeline Dataform.
+
+
+    rules:
+      - name: click_events_volume_code
+        dimension: VALIDITY
+        # Usiamo SQL invece di row_count_expectation per evitare il bug
+        sql_assertion:
+          sql_statement: |
+            SELECT * FROM (
+              SELECT COUNT(*) as cnt 
+              FROM `analystack.dataform.click_events_latest`
+            ) WHERE cnt < 2

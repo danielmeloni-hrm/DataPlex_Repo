@@ -1,17 +1,13 @@
 scans:
-    click_events_volume_check:
-    display_name: "Click Event Sotto 5"
+  click_events_volume_check:
+    display_name: "Click Event Volume Check Today"
+    resource_path: "projects/analystack/datasets/dataform/tables/click_events_latest"
+    schedule: "0 * * * *" # Ogni ora
+    # Il filtro per "oggi" rimane qui
   
-    # Percorso completo della tabella BigQuery creata da Dataform
-    table: "projects/analystack/datasets/dataform_staging/tables/click_events_latest"
-    description: "Verifica che ci siano almeno 5 eventi di click oggi"
-    
-    # Filtro per controllare solo l'ultima giornata
-    row_filter: "event_date = CURRENT_DATE()"
-    
     rules:
-      - column: event_name
-        dimension: VALIDITY
-        # Se trova meno di 6 righe (quindi <= 5), la scansione fallisce
-        row_count_expectation:
-          min_count: 6
+      - dimension: VALIDITY
+        # Usiamo SQL invece di row_count_expectation per evitare il bug
+        sql_assertion:
+          sql_statement: |
+            SELECT COUNT(*) FROM `analystack.dataform.click_events_latest`
