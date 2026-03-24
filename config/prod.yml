@@ -1,0 +1,5 @@
+project_id: "analystack"
+location: "europe-west1"
+env: "prod"
+# Facoltativo: ID del dataset dove Dataplex scriverà i risultati storici delle scansioni
+export_dataset: "dataplex_logs"
